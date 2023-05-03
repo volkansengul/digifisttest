@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Digifist - Test Case</title>
+    <link rel="stylesheet" href="assets/css/main.css"/>
+</head>
+<body>
+
+<main>
+
+    <div class="bg">
+    </div>
+
+    <div class="content">
+
+        <div class="text-card">
+            <h1>Everyday items, we have something to suit every occasion.</h1>
+            <p>At suspendisse augue lectus arcu, accumsan ut sit posuere vitae sit tincidunt semper eu proin leo gravida
+                cursus.</p>
+            <span>Shop all everyday items</span>
+        </div>
+
+
+        <div class="products-slider-container">
+
+            <a href="#" class="slider-nav-button next">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16">
+                    <path fill="#000" fill-rule="evenodd"
+                          d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708Z"
+                          clip-rule="evenodd"/>
+                </svg>
+            </a>
+            <a href="#" class="slider-nav-button prev hide">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16">
+                    <path fill="#000" fill-rule="evenodd"
+                          d="M11.354 14.354a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708.708L5.707 8l5.647 5.646a.5.5 0 0 1 0 .708Z"
+                          clip-rule="evenodd"/>
+                </svg>
+            </a>
+            <div class="products-slider">
+            </div>
+        </div>
+
+    </div>
+
+</main>
+
+<template>
+    <div class="slider-item">
+        <img src="" class="product-image"/>
+        <div class="product-name"></div>
+        <div class="product-price-variant">
+            <span class="product-price"></span>
+            <div class="product-colors">
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    const products = [
+        {
+            id: 1,
+            name: '365 Signature Hoodie',
+            image: '1_green.jpg',
+            price: 33.95,
+            currency: '€',
+            variations: {colors: ['blue', 'rose', 'pink', 'green']},
+            variant: {color: 'green'}
+        },
+        {
+            id: 2,
+            name: 'Organic Skinny High Waist Jeans',
+            image: '2_yellow.jpg',
+            price: 33.95,
+            currency: '€',
+            variations: {colors: ['blue', 'yellow', 'pink', 'green']},
+            variant: {color: 'yellow'}
+        },
+        {
+            id: 3,
+            name: 'Organic Skinny High Waist Jeans',
+            image: '3_blue.jpg',
+            price: 33.95,
+            currency: '€',
+            variations: {colors: ['blue', 'rose', 'pink', 'green']},
+            variant: {color: 'blue'}
+        },
+        {
+            id: 1,
+            name: '365 Signature Hoodie',
+            image: '1_green.jpg',
+            price: 33.95,
+            currency: '€',
+            variations: {colors: ['blue', 'rose', 'pink', 'green']},
+            variant: {color: 'green'}
+        },
+        {
+            id: 2,
+            name: '365 Signature Hoodie',
+            image: '2_blue.jpg',
+            price: 33.95,
+            currency: '€',
+            variations: {colors: ['blue', 'yellow', 'pink', 'green']},
+            variant: {color: 'blue'}
+        },
+    ]
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+        /* ===== slider ===== */
+        let activeSlider = 1
+        let sliderItems;
+        let sliderItemWidth, sliderContainerWidth;
+        let sliderItemGap = 32;
+        const slider = document.getElementsByClassName('products-slider')[0]
+        const sliderItemTemplate = document.getElementsByTagName("template")[0]
+        const sliderItem = sliderItemTemplate.content.querySelector('.slider-item')
+
+        products.forEach(item => {
+            sliderItems = document.importNode(sliderItem, true)
+            sliderItems.querySelector('.product-name').textContent = item.name
+            sliderItems.querySelector('.product-price').textContent = `${item.currency}${item.price}`
+            sliderItems.querySelector('.product-image').src = `assets/images/products/${item.image}`
+            sliderItems.querySelector('.product-image').setAttribute('data-id', item.id)
+            item.variations.colors.forEach(_color => {
+                let colorItem = document.createElement('i')
+                colorItem.classList.add('product-color')
+                colorItem.classList.add(_color)
+                if (_color === item.variant.color) {
+                    colorItem.classList.add('active')
+                }
+                sliderItems.querySelector('.product-colors').append(colorItem)
+            })
+            slider.appendChild(sliderItems)
+        })
+
+        const sliderContainer = document.getElementsByClassName('products-slider-container')[0]
+        sliderContainerWidth = sliderContainer.offsetWidth
+        sliderItemWidth = document.getElementsByClassName('slider-item')[0].offsetWidth
+        const sliderItemFullWidth = sliderItemGap + sliderItemWidth
+        let sliderStopper = parseInt(sliderContainerWidth / (sliderItemGap + sliderItemWidth)) + 1
+        if (window.innerWidth > 1800) {
+            sliderStopper -= 2;
+        } else if (window.innerWidth > 1440) {
+            sliderStopper -= 1;
+        } else if (window.innerWidth < 1280) {
+            sliderStopper += 1;
+        }
+
+        document.getElementsByClassName('slider-nav-button next')[0].addEventListener('click', function (e) {
+            e.preventDefault();
+            activeSlider++;
+            if (activeSlider > sliderStopper) {
+                document.getElementsByClassName('slider-nav-button next')[0].classList.add('hide')
+            }
+            document.getElementsByClassName('slider-nav-button prev')[0].classList.remove('hide')
+            slider.style.marginLeft = `${sliderItemFullWidth * (activeSlider - 1) * -1}px`
+        })
+
+        document.getElementsByClassName('slider-nav-button prev')[0].addEventListener('click', function (e) {
+            e.preventDefault();
+            activeSlider--;
+            if (activeSlider === 1) {
+                document.getElementsByClassName('slider-nav-button prev')[0].classList.add('hide')
+            }
+            if (activeSlider <= sliderStopper) {
+                document.getElementsByClassName('slider-nav-button next')[0].classList.remove('hide')
+            }
+            slider.style.marginLeft = `${sliderItemFullWidth * (activeSlider - 1) * -1}px`
+        })
+
+        /* ===== variation selector ===== */
+        const colorSelectors = document.getElementsByClassName('product-color')
+        for (var i = 0; i < colorSelectors.length; i++) {
+            colorSelectors[i].addEventListener('click', function (e) {
+                let color = this.classList.value.replace('active', '').replace('product-color', '').trim()
+                let productImg = this.parentElement.parentElement.parentElement.querySelector('.product-image')
+                productImg.src = `assets/images/products/${productImg.getAttribute('data-id')}_${color}.jpg`
+                let _colors = this.parentElement.getElementsByClassName('product-color')
+                for (var _i = 0; _i < _colors.length; _i++) {
+                    _colors[_i].classList.remove('active')
+                }
+                this.classList.add('active')
+            })
+        }
+    });
+
+</script>
+</body>
+</html>
